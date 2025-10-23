@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .card h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--secondary);
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-low {
+            color: var(--danger);
+            font-weight: bold;
+        }
+        
+        .status-ok {
+            color: var(--success);
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .edit-btn {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .issue-btn {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            color: var(--dark);
+            border-top: 1px solid #ddd;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .report-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .report-filters .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .settings-section h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .logout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logout-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .logout-modal h2 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .logout-modal p {
+            margin-bottom: 20px;
+        }
+        
+        .logout-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .logout-modal-buttons button {
+            flex: 1;
+        }
+        
+        .cancel-btn {
+            background-color: var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .report-filters {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Inventory Management System</div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active" data-tab="dashboard">Dashboard</a></li>
+                        <li><a href="#" data-tab="reports">Reports</a></li>
+                        <li><a href="#" data-tab="settings">Settings</a></li>
+                        <li><a href="#" id="logout-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>Total Items</h3>
+                    <div class="number" id="total-items">125</div>
+                </div>
+                <div class="card">
+                    <h3>Low Stock Items</h3>
+                    <div class="number" id="low-stock">8</div>
+                </div>
+                <div class="card">
+                    <h3>Issued Today</h3>
+                    <div class="number" id="issued-today">15</div>
+                </div>
+                <div class="card">
+                    <h3>Active Jobs</h3>
+                    <div class="number" id="active-jobs">12</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="inventory">Inventory</button>
+                <button class="tab" data-tab="issue">Issue Items</button>
+                <button class="tab" data-tab="jobs">Job Numbers</button>
+                <button class="tab" data-tab="history">Issue History</button>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="tab-content active" id="inventory-tab">
+                <h2>Inventory Management</h2>
+                <div class="alert alert-success" id="success-message" style="display: none;"></div>
+                <div class="alert alert-error" id="error-message" style="display: none;"></div>
+                
+                <button id="add-item-btn" style="margin-bottom: 20px;">Add New Item</button>
+                
+                <div id="item-form" style="display: none; margin-bottom: 20px;">
+                    <h3>Add/Edit Item</h3>
+                    <form id="itemForm">
+                        <input type="hidden" id="item-id">
+                        <div class="form-group">
+                            <label for="item-name">Item Name</label>
+                            <input type="text" id="item-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-description">Description</label>
+                            <textarea id="item-description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-category">Category</label>
+                            <select id="item-category">
+                                <option value="Electronics">Electronics</option>
+                                <option value="Tools">Tools</option>
+                                <option value="Materials">Materials</option>
+                                <option value="Consumables">Consumables</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-quantity">Quantity</label>
+                            <input type="number" id="item-quantity" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-min-quantity">Minimum Quantity</label>
+                            <input type="number" id="item-min-quantity" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-location">Location</label>
+                            <input type="text" id="item-location">
+                        </div>
+                        <button type="submit">Save Item</button>
+                        <button type="button" id="cancel-item-btn" style="background-color: var(--dark);">Cancel</button>
+                    </form>
+                </div>
+
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Min Qty</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-body">
+                        <!-- Inventory items will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Issue Items Tab -->
+            <div class="tab-content" id="issue-tab">
+                <h2>Issue Items to Job</h2>
+                <div class="alert alert-success" id="issue-success-message" style="display: none;"></div>
+                <div class="alert alert-error" id="issue-error-message" style="display: none;"></div>
+                
+                <form id="issueForm">
+                    <div class="form-group">
+                        <label for="job-number">Job Number</label>
+                        <select id="job-number" required>
+                            <option value="">Select Job Number</option>
+                            <!-- Job numbers will be populated here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="issue-item">Item</label>
+                        <select id="issue-item" required>
+                            <option value="">Select Item</option>
+                            <!-- Items will be populated here -->
+                        </select>
+                        <div id="available-quantity" style="margin-top: 5px; font-size: 0.9rem;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="issue-quantity">Quantity to Issue</label>
+                        <input type="number" id="issue-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="issue-notes">Notes (Optional)</label>
+                        <textarea id="issue-notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit">Issue Item</button>
+                </form>
+            </div>
+
+            <!-- Job Numbers Tab -->
+            <div class="tab-content" id="jobs-tab">
+                <h2>Job Number Management</h2>
+                <div class="alert alert-success" id="job-success-message" style="display: none;"></div>
+                <div class="alert alert-error" id="job-error-message" style="display: none;"></div>
+                
+                <button id="add-job-btn" style="margin-bottom: 20px;">Add New Job</button>
+                
+                <div id="job-form" style="display: none; margin-bottom: 20px;">
+                    <h3>Add/Edit Job</h3>
+                    <form id="jobForm">
+                        <input type="hidden" id="job-id">
+                        <div class="form-group">
+                            <label for="job-number-input">Job Number</label>
+                            <input type="text" id="job-number-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-description">Description</label>
+                            <textarea id="job-description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-status">Status</label>
+                            <select id="job-status">
+                                <option value="Active">Active</option>
+                                <option value="Completed">Completed</option>
+                                <option value="On Hold">On Hold</option>
+                            </select>
+                        </div>
+                        <button type="submit">Save Job</button>
+                        <button type="button" id="cancel-job-btn" style="background-color: var(--dark);">Cancel</button>
+                    </form>
+                </div>
+
+                <table id="jobs-table">
+                    <thead>
+                        <tr>
+                            <th>Job Number</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs-body">
+                        <!-- Job numbers will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Issue History Tab -->
+            <div class="tab-content" id="history-tab">
+                <h2>Issue History</h2>
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <input type="text" id="history-search" placeholder="Search by job number or item...">
+                    <button id="search-history">Search</button>
+                    <button id="clear-history" style="background-color: var(--dark);">Clear</button>
+                </div>
+                
+                <table id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Job Number</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Issued By</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <!-- Issue history will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" style="display: none;">
+            <h2>Reports & Analytics</h2>
+            
+            <div class="report-filters">
+                <div class="form-group">
+                    <label for="report-type">Report Type</label>
+                    <select id="report-type">
+                        <option value="inventory">Inventory Summary</option>
+                        <option value="issuance">Item Issuance</option>
+                        <option value="job-usage">Job Usage</option>
+                        <option value="low-stock">Low Stock Alert</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date-from">From Date</label>
+                    <input type="date" id="date-from">
+                </div>
+                <div class="form-group">
+                    <label for="date-to">To Date</label>
+                    <input type="date" id="date-to">
+                </div>
+                <div class="form-group">
+                    <label for="job-filter">Job Number</label>
+                    <select id="job-filter">
+                        <option value="">All Jobs</option>
+                        <!-- Job numbers will be populated here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button id="generate-report" style="margin-top: 25px;">Generate Report</button>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="report-chart"></canvas>
+            </div>
+
+            <div id="report-results">
+                <!-- Report results will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings-section" style="display: none;">
+            <h2>System Settings</h2>
+            
+            <div class="settings-section">
+                <h3>User Preferences</h3>
+                <form id="user-preferences">
+                    <div class="form-group">
+                        <label for="user-name">Full Name</label>
+                        <input type="text" id="user-name" value="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email Address</label>
+                        <input type="email" id="user-email" value="john.doe@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-role">Role</label>
+                        <select id="user-role">
+                            <option value="admin">Administrator</option>
+                            <option value="manager">Manager</option>
+                            <option value="user" selected>User</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notifications">Notifications</label>
+                        <div>
+                            <input type="checkbox" id="email-notifications" checked>
+                            <label for="email-notifications" style="display: inline; margin-left: 5px;">Email Notifications</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="low-stock-alerts" checked>
+                            <label for="low-stock-alerts" style="display: inline; margin-left: 5px;">Low Stock Alerts</label>
+                        </div>
+                    </div>
+                    <button type="submit">Save Preferences</button>
+                </form>
+            </div>
+            
+            <div class="settings-section">
+                <h3>System Configuration</h3>
+                <form id="system-config">
+                    <div class="form-group">
+                        <label for="company-name">Company Name</label>
+                        <input type="text" id="company-name" value="ABC Corporation">
+                    </div>
+                    <div class="form-group">
+                        <label for="auto-logout">Auto Logout (minutes)</label>
+                        <input type="number" id="auto-logout" min="5" max="120" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="low-stock-threshold">Low Stock Threshold (%)</label>
+                        <input type="number" id="low-stock-threshold" min="1" max="50" value="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="backup-frequency">Backup Frequency</label>
+                        <select id="backup-frequency">
+                            <option value="daily">Daily</option>
+                            <option value="weekly" selected>Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <button type="submit">Save Configuration</button>
+                </form>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Database Management</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button id="backup-db">Backup Database</button>
+                    <button id="restore-db" style="background-color: var(--warning);">Restore Database</button>
+                    <button id="clear-data" style="background-color: var(--danger);">Clear All Data</button>
+                </div>
+                <div class="alert alert-success" id="db-success-message" style="display: none;"></div>
+                <div class="alert alert-error" id="db-error-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal" id="logout-modal">
+        <div class="logout-modal-content">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to logout from the system?</p>
+            <div class="logout-modal-buttons">
+                <button id="confirm-logout">Yes, Logout</button>
+                <button id="cancel-logout" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Inventory Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data (in a real application, this would come from a database)
+        let inventory = [
+            { id: 1, name: "Laptop", description: "Dell XPS 13", category: "Electronics", quantity: 15, minQuantity: 5, location: "Storage A" },
+            { id: 2, name: "Screwdriver Set", description: "Professional screwdriver set", category: "Tools", quantity: 25, minQuantity: 10, location: "Tool Room" },
+            { id: 3, name: "Copper Wire", description: "10 AWG copper wire", category: "Materials", quantity: 100, minQuantity: 50, location: "Warehouse B" },
+            { id: 4, name: "Safety Glasses", description: "Anti-fog safety glasses", category: "Consumables", quantity: 45, minQuantity: 20, location: "Safety Cabinet" },
+            { id: 5, name: "Multimeter", description: "Digital multimeter", category: "Electronics", quantity: 8, minQuantity: 5, location: "Lab" }
+        ];
+
+        let jobNumbers = [
+            { id: 1, number: "JOB-2023-001", description: "Office Renovation", status: "Active" },
+            { id: 2, number: "JOB-2023-002", description: "Network Installation", status: "Active" },
+            { id: 3, number: "JOB-2023-003", description: "Security System Upgrade", status: "Completed" },
+            { id: 4, number: "JOB-2023-004", description: "Server Room Setup", status: "Active" }
+        ];
+
+        let issueHistory = [
+            { id: 1, date: "2023-10-15", jobNumber: "JOB-2023-001", itemId: 1, itemName: "Laptop", quantity: 2, issuedBy: "John Doe", notes: "For project managers" },
+            { id: 2, date: "2023-10-16", jobNumber: "JOB-2023-002", itemId: 3, itemName: "Copper Wire", quantity: 25, issuedBy: "Jane Smith", notes: "For network cabling" },
+            { id: 3, date: "2023-10-17", jobNumber: "JOB-2023-004", itemId: 1, itemName: "Laptop", quantity: 3, issuedBy: "Mike Johnson", notes: "For server administration" },
+            { id: 4, date: "2023-10-18", jobNumber: "JOB-2023-001", itemId: 4, itemName: "Safety Glasses", quantity: 10, issuedBy: "John Doe", notes: "For construction team" }
+        ];
+
+        // DOM elements
+        const navLinks = document.querySelectorAll('nav a');
+        const sections = {
+            dashboard: document.getElementById('dashboard-section'),
+            reports: document.getElementById('reports-section'),
+            settings: document.getElementById('settings-section')
+        };
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const inventoryBody = document.getElementById('inventory-body');
+        const jobsBody = document.getElementById('jobs-body');
+        const historyBody = document.getElementById('history-body');
+        const itemForm = document.getElementById('item-form');
+        const jobForm = document.getElementById('job-form');
+        const addItemBtn = document.getElementById('add-item-btn');
+        const cancelItemBtn = document.getElementById('cancel-item-btn');
+        const addJobBtn = document.getElementById('add-job-btn');
+        const cancelJobBtn = document.getElementById('cancel-job-btn');
+        const itemFormElement = document.getElementById('itemForm');
+        const jobFormElement = document.getElementById('jobForm');
+        const issueForm = document.getElementById('issueForm');
+        const jobNumberSelect = document.getElementById('job-number');
+        const issueItemSelect = document.getElementById('issue-item');
+        const availableQuantityDiv = document.getElementById('available-quantity');
+        const issueQuantityInput = document.getElementById('issue-quantity');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const issueSuccessMessage = document.getElementById('issue-success-message');
+        const issueErrorMessage = document.getElementById('issue-error-message');
+        const jobSuccessMessage = document.getElementById('job-success-message');
+        const jobErrorMessage = document.getElementById('job-error-message');
+        const logoutModal = document.getElementById('logout-modal');
+        const logoutLink = document.getElementById('logout-link');
+        const confirmLogout = document.getElementById('confirm-logout');
+        const cancelLogout = document.getElementById('cancel-logout');
+        const generateReportBtn = document.getElementById('generate-report');
+        const reportResults = document.getElementById('report-results');
+        const userPreferencesForm = document.getElementById('user-preferences');
+        const systemConfigForm = document.getElementById('system-config');
+        const backupDbBtn = document.getElementById('backup-db');
+        const restoreDbBtn = document.getElementById('restore-db');
+        const clearDataBtn = document.getElementById('clear-data');
+        const dbSuccessMessage = document.getElementById('db-success-message');
+        const dbErrorMessage = document.getElementById('db-error-message');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            renderInventory();
+            renderJobNumbers();
+            renderIssueHistory();
+            populateJobNumberSelect();
+            populateIssueItemSelect();
+            populateJobFilter();
+            
+            // Event listeners for navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetSection = this.getAttribute('data-tab');
+                    if (targetSection) {
+                        activateSection(targetSection);
+                        // Update active nav link
+                        navLinks.forEach(navLink => navLink.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            // Event listeners for tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    activateTab(tabId);
+                });
+            });
+            
+            // Event listeners for forms
+            addItemBtn.addEventListener('click', showItemForm);
+            cancelItemBtn.addEventListener('click', hideItemForm);
+            addJobBtn.addEventListener('click', showJobForm);
+            cancelJobBtn.addEventListener('click', hideJobForm);
+            itemFormElement.addEventListener('submit', handleItemSubmit);
+            jobFormElement.addEventListener('submit', handleJobSubmit);
+            issueForm.addEventListener('submit', handleIssueSubmit);
+            issueItemSelect.addEventListener('change', updateAvailableQuantity);
+            
+            // Event listeners for search
+            document.getElementById('search-history').addEventListener('click', searchHistory);
+            document.getElementById('clear-history').addEventListener('click', clearHistorySearch);
+            
+            // Event listeners for logout
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                logoutModal.style.display = 'flex';
+            });
+            
+            confirmLogout.addEventListener('click', performLogout);
+            cancelLogout.addEventListener('click', function() {
+                logoutModal.style.display = 'none';
+            });
+            
+            // Event listeners for reports
+            generateReportBtn.addEventListener('click', generateReport);
+            
+            // Event listeners for settings
+            userPreferencesForm.addEventListener('submit', saveUserPreferences);
+            systemConfigForm.addEventListener('submit', saveSystemConfig);
+            backupDbBtn.addEventListener('click', backupDatabase);
+            restoreDbBtn.addEventListener('click', restoreDatabase);
+            clearDataBtn.addEventListener('click', clearAllData);
+        });
+
+        // Section navigation
+        function activateSection(sectionId) {
+            Object.values(sections).forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            if (sections[sectionId]) {
+                sections[sectionId].style.display = 'block';
+            }
+        }
+
+        // Tab navigation
+        function activateTab(tabId) {
+            tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            tabContents.forEach(content => {
+                if (content.id === `${tabId}-tab`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            const totalItems = inventory.reduce((sum, item) => sum + item.quantity, 0);
+            const lowStockItems = inventory.filter(item => item.quantity <= item.minQuantity).length;
+            const today = new Date().toISOString().split('T')[0];
+            const issuedToday = issueHistory.filter(issue => issue.date === today).length;
+            const activeJobs = jobNumbers.filter(job => job.status === 'Active').length;
+            
+            document.getElementById('total-items').textContent = totalItems;
+            document.getElementById('low-stock').textContent = lowStockItems;
+            document.getElementById('issued-today').textContent = issuedToday;
+            document.getElementById('active-jobs').textContent = activeJobs;
+        }
+
+        // Render inventory table
+        function renderInventory() {
+            inventoryBody.innerHTML = '';
+            
+            inventory.forEach(item => {
+                const statusClass = item.quantity <= item.minQuantity ? 'status-low' : 'status-ok';
+                const statusText = item.quantity <= item.minQuantity ? 'Low Stock' : 'In Stock';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.minQuantity}</td>
+                    <td>${item.location}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${item.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${item.id}">Delete</button>
+                        <button class="action-btn issue-btn" data-id="${item.id}">Issue</button>
+                    </td>
+                `;
+                inventoryBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.getAttribute('data-id'));
+                    editItem(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.getAttribute('data-id'));
+                    deleteItem(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.issue-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.getAttribute('data-id'));
+                    activateTab('issue');
+                    issueItemSelect.value = itemId;
+                    updateAvailableQuantity();
+                });
+            });
+        }
+
+        // Render job numbers table
+        function renderJobNumbers() {
+            jobsBody.innerHTML = '';
+            
+            jobNumbers.forEach(job => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${job.number}</td>
+                    <td>${job.description}</td>
+                    <td>${job.status}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${job.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${job.id}">Delete</button>
+                    </td>
+                `;
+                jobsBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('#jobs-body .edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const jobId = parseInt(this.getAttribute('data-id'));
+                    editJob(jobId);
+                });
+            });
+            
+            document.querySelectorAll('#jobs-body .delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const jobId = parseInt(this.getAttribute('data-id'));
+                    deleteJob(jobId);
+                });
+            });
+        }
+
+        // Render issue history table
+        function renderIssueHistory() {
+            historyBody.innerHTML = '';
+            
+            issueHistory.forEach(issue => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${issue.date}</td>
+                    <td>${issue.jobNumber}</td>
+                    <td>${issue.itemName}</td>
+                    <td>${issue.quantity}</td>
+                    <td>${issue.issuedBy}</td>
+                    <td>${issue.notes}</td>
+                `;
+                historyBody.appendChild(row);
+            });
+        }
+
+        // Populate job number select in issue form
+        function populateJobNumberSelect() {
+            jobNumberSelect.innerHTML = '<option value="">Select Job Number</option>';
+            
+            jobNumbers
+                .filter(job => job.status === 'Active')
+                .forEach(job => {
+                    const option = document.createElement('option');
+                    option.value = job.id;
+                    option.textContent = job.number;
+                    jobNumberSelect.appendChild(option);
+                });
+        }
+
+        // Populate job filter in reports
+        function populateJobFilter() {
+            const jobFilter = document.getElementById('job-filter');
+            jobFilter.innerHTML = '<option value="">All Jobs</option>';
+            
+            jobNumbers.forEach(job => {
+                const option = document.createElement('option');
+                option.value = job.id;
+                option.textContent = job.number;
+                jobFilter.appendChild(option);
+            });
+        }
+
+        // Populate item select in issue form
+        function populateIssueItemSelect() {
+            issueItemSelect.innerHTML = '<option value="">Select Item</option>';
+            
+            inventory.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.name} (${item.quantity} available)`;
+                issueItemSelect.appendChild(option);
+            });
+        }
+
+        // Update available quantity when item is selected
+        function updateAvailableQuantity() {
+            const itemId = parseInt(issueItemSelect.value);
+            if (itemId) {
+                const item = inventory.find(i => i.id === itemId);
+                if (item) {
+                    availableQuantityDiv.textContent = `Available: ${item.quantity}`;
+                    issueQuantityInput.max = item.quantity;
+                }
+            } else {
+                availableQuantityDiv.textContent = '';
+            }
+        }
+
+        // Show item form
+        function showItemForm() {
+            itemForm.style.display = 'block';
+            addItemBtn.style.display = 'none';
+            document.getElementById('item-id').value = '';
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-description').value = '';
+            document.getElementById('item-category').value = 'Electronics';
+            document.getElementById('item-quantity').value = '';
+            document.getElementById('item-min-quantity').value = '';
+            document.getElementById('item-location').value = '';
+        }
+
+        // Hide item form
+        function hideItemForm() {
+            itemForm.style.display = 'none';
+            addItemBtn.style.display = 'inline-block';
+        }
+
+        // Show job form
+        function showJobForm() {
+            jobForm.style.display = 'block';
+            addJobBtn.style.display = 'none';
+            document.getElementById('job-id').value = '';
+            document.getElementById('job-number-input').value = '';
+            document.getElementById('job-description').value = '';
+            document.getElementById('job-status').value = 'Active';
+        }
+
+        // Hide job form
+        function hideJobForm() {
+            jobForm.style.display = 'none';
+            addJobBtn.style.display = 'inline-block';
+        }
+
+        // Handle item form submission
+        function handleItemSubmit(e) {
+            e.preventDefault();
+            
+            const itemId = document.getElementById('item-id').value;
+            const name = document.getElementById('item-name').value;
+            const description = document.getElementById('item-description').value;
+            const category = document.getElementById('item-category').value;
+            const quantity = parseInt(document.getElementById('item-quantity').value);
+            const minQuantity = parseInt(document.getElementById('item-min-quantity').value);
+            const location = document.getElementById('item-location').value;
+            
+            if (itemId) {
+                // Edit existing item
+                const index = inventory.findIndex(item => item.id === parseInt(itemId));
+                if (index !== -1) {
+                    inventory[index] = {
+                        ...inventory[index],
+                        name,
+                        description,
+                        category,
+                        quantity,
+                        minQuantity,
+                        location
+                    };
+                    
+                    showMessage(successMessage, 'Item updated successfully!');
+                }
+            } else {
+                // Add new item
+                const newId = inventory.length > 0 ? Math.max(...inventory.map(item => item.id)) + 1 : 1;
+                inventory.push({
+                    id: newId,
+                    name,
+                    description,
+                    category,
+                    quantity,
+                    minQuantity,
+                    location
+                });
+                
+                showMessage(successMessage, 'Item added successfully!');
+            }
+            
+            hideItemForm();
+            renderInventory();
+            populateIssueItemSelect();
+            updateDashboard();
+        }
+
+        // Handle job form submission
+        function handleJobSubmit(e) {
+            e.preventDefault();
+            
+            const jobId = document.getElementById('job-id').value;
+            const number = document.getElementById('job-number-input').value;
+            const description = document.getElementById('job-description').value;
+            const status = document.getElementById('job-status').value;
+            
+            if (jobId) {
+                // Edit existing job
+                const index = jobNumbers.findIndex(job => job.id === parseInt(jobId));
+                if (index !== -1) {
+                    jobNumbers[index] = {
+                        ...jobNumbers[index],
+                        number,
+                        description,
+                        status
+                    };
+                    
+                    showMessage(jobSuccessMessage, 'Job updated successfully!');
+                }
+            } else {
+                // Add new job
+                const newId = jobNumbers.length > 0 ? Math.max(...jobNumbers.map(job => job.id)) + 1 : 1;
+                jobNumbers.push({
+                    id: newId,
+                    number,
+                    description,
+                    status
+                });
+                
+                showMessage(jobSuccessMessage, 'Job added successfully!');
+            }
+            
+            hideJobForm();
+            renderJobNumbers();
+            populateJobNumberSelect();
+            populateJobFilter();
+            updateDashboard();
+        }
+
+        // Handle issue form submission
+        function handleIssueSubmit(e) {
+            e.preventDefault();
+            
+            const jobId = parseInt(jobNumberSelect.value);
+            const itemId = parseInt(issueItemSelect.value);
+            const quantity = parseInt(issueQuantityInput.value);
+            const notes = document.getElementById('issue-notes').value;
+            
+            if (!jobId || !itemId || !quantity) {
+                showMessage(issueErrorMessage, 'Please fill all required fields!');
+                return;
+            }
+            
+            const job = jobNumbers.find(j => j.id === jobId);
+            const item = inventory.find(i => i.id === itemId);
+            
+            if (!job || !item) {
+                showMessage(issueErrorMessage, 'Invalid job or item selected!');
+                return;
+            }
+            
+            if (quantity > item.quantity) {
+                showMessage(issueErrorMessage, 'Insufficient quantity available!');
+                return;
+            }
+            
+            // Update inventory
+            item.quantity -= quantity;
+            
+            // Add to issue history
+            const newId = issueHistory.length > 0 ? Math.max(...issueHistory.map(issue => issue.id)) + 1 : 1;
+            const today = new Date().toISOString().split('T')[0];
+            
+            issueHistory.unshift({
+                id: newId,
+                date: today,
+                jobNumber: job.number,
+                itemId: itemId,
+                itemName: item.name,
+                quantity: quantity,
+                issuedBy: 'Current User', // In a real app, this would be the logged-in user
+                notes: notes
+            });
+            
+            showMessage(issueSuccessMessage, 'Item issued successfully!');
+            
+            // Reset form
+            issueForm.reset();
+            availableQuantityDiv.textContent = '';
+            
+            // Update displays
+            renderInventory();
+            renderIssueHistory();
+            populateIssueItemSelect();
+            updateDashboard();
+        }
+
+        // Edit item
+        function editItem(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            if (item) {
+                document.getElementById('item-id').value = item.id;
+                document.getElementById('item-name').value = item.name;
+                document.getElementById('item-description').value = item.description;
+                document.getElementById('item-category').value = item.category;
+                document.getElementById('item-quantity').value = item.quantity;
+                document.getElementById('item-min-quantity').value = item.minQuantity;
+                document.getElementById('item-location').value = item.location;
+                
+                itemForm.style.display = 'block';
+                addItemBtn.style.display = 'none';
+            }
+        }
+
+        // Delete item
+        function deleteItem(itemId) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                inventory = inventory.filter(item => item.id !== itemId);
+                renderInventory();
+                populateIssueItemSelect();
+                updateDashboard();
+                showMessage(successMessage, 'Item deleted successfully!');
+            }
+        }
+
+        // Edit job
+        function editJob(jobId) {
+            const job = jobNumbers.find(j => j.id === jobId);
+            if (job) {
+                document.getElementById('job-id').value = job.id;
+                document.getElementById('job-number-input').value = job.number;
+                document.getElementById('job-description').value = job.description;
+                document.getElementById('job-status').value = job.status;
+                
+                jobForm.style.display = 'block';
+                addJobBtn.style.display = 'none';
+            }
+        }
+
+        // Delete job
+        function deleteJob(jobId) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                jobNumbers = jobNumbers.filter(job => job.id !== jobId);
+                renderJobNumbers();
+                populateJobNumberSelect();
+                populateJobFilter();
+                updateDashboard();
+                showMessage(jobSuccessMessage, 'Job deleted successfully!');
+            }
+        }
+
+        // Search issue history
+        function searchHistory() {
+            const searchTerm = document.getElementById('history-search').value.toLowerCase();
+            
+            if (!searchTerm) {
+                renderIssueHistory();
+                return;
+            }
+            
+            const filteredHistory = issueHistory.filter(issue => 
+                issue.jobNumber.toLowerCase().includes(searchTerm) || 
+                issue.itemName.toLowerCase().includes(searchTerm)
+            );
+            
+            historyBody.innerHTML = '';
+            
+            filteredHistory.forEach(issue => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${issue.date}</td>
+                    <td>${issue.jobNumber}</td>
+                    <td>${issue.itemName}</td>
+                    <td>${issue.quantity}</td>
+                    <td>${issue.issuedBy}</td>
+                    <td>${issue.notes}</td>
+                `;
+                historyBody.appendChild(row);
+            });
+        }
+
+        // Clear history search
+        function clearHistorySearch() {
+            document.getElementById('history-search').value = '';
+            renderIssueHistory();
+        }
+
+        // Generate report
+        function generateReport() {
+            const reportType = document.getElementById('report-type').value;
+            const dateFrom = document.getElementById('date-from').value;
+            const dateTo = document.getElementById('date-to').value;
+            const jobFilter = document.getElementById('job-filter').value;
+            
+            let reportData = '';
+            
+            switch(reportType) {
+                case 'inventory':
+                    reportData = generateInventoryReport();
+                    break;
+                case 'issuance':
+                    reportData = generateIssuanceReport(dateFrom, dateTo, jobFilter);
+                    break;
+                case 'job-usage':
+                    reportData = generateJobUsageReport(dateFrom, dateTo);
+                    break;
+                case 'low-stock':
+                    reportData = generateLowStockReport();
+                    break;
+            }
+            
+            reportResults.innerHTML = reportData;
+        }
+
+        // Generate inventory report
+        function generateInventoryReport() {
+            let html = '<h3>Inventory Summary Report</h3>';
+            html += '<table><thead><tr><th>Category</th><th>Items</th><th>Total Quantity</th><th>Low Stock Items</th></tr></thead><tbody>';
+            
+            const categories = [...new Set(inventory.map(item => item.category))];
+            let totalItems = 0;
+            let totalQuantity = 0;
+            let totalLowStock = 0;
+            
+            categories.forEach(category => {
+                const categoryItems = inventory.filter(item => item.category === category);
+                const categoryCount = categoryItems.length;
+                const categoryQuantity = categoryItems.reduce((sum, item) => sum + item.quantity, 0);
+                const categoryLowStock = categoryItems.filter(item => item.quantity <= item.minQuantity).length;
+                
+                html += `<tr>
+                    <td>${category}</td>
+                    <td>${categoryCount}</td>
+                    <td>${categoryQuantity}</td>
+                    <td>${categoryLowStock}</td>
+                </tr>`;
+                
+                totalItems += categoryCount;
+                totalQuantity += categoryQuantity;
+                totalLowStock += categoryLowStock;
+            });
+            
+            html += `<tr style="font-weight: bold;">
+                <td>Total</td>
+                <td>${totalItems}</td>
+                <td>${totalQuantity}</td>
+                <td>${totalLowStock}</td>
+            </tr>`;
+            html += '</tbody></table>';
+            
+            return html;
+        }
+
+        // Generate issuance report
+        function generateIssuanceReport(dateFrom, dateTo, jobFilter) {
+            let filteredHistory = [...issueHistory];
+            
+            if (dateFrom) {
+                filteredHistory = filteredHistory.filter(issue => issue.date >= dateFrom);
+            }
+            
+            if (dateTo) {
+                filteredHistory = filteredHistory.filter(issue => issue.date <= dateTo);
+            }
+            
+            if (jobFilter) {
+                const job = jobNumbers.find(j => j.id === parseInt(jobFilter));
+                if (job) {
+                    filteredHistory = filteredHistory.filter(issue => issue.jobNumber === job.number);
+                }
+            }
+            
+            let html = `<h3>Item Issuance Report</h3>`;
+            if (dateFrom || dateTo) {
+                html += `<p>Period: ${dateFrom || 'Start'} to ${dateTo || 'End'}</p>`;
+            }
+            
+            html += '<table><thead><tr><th>Date</th><th>Job Number</th><th>Item</th><th>Quantity</th><th>Issued By</th></tr></thead><tbody>';
+            
+            filteredHistory.forEach(issue => {
+                html += `<tr>
+                    <td>${issue.date}</td>
+                    <td>${issue.jobNumber}</td>
+                    <td>${issue.itemName}</td>
+                    <td>${issue.quantity}</td>
+                    <td>${issue.issuedBy}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            return html;
+        }
+
+        // Generate job usage report
+        function generateJobUsageReport(dateFrom, dateTo) {
+            let filteredHistory = [...issueHistory];
+            
+            if (dateFrom) {
+                filteredHistory = filteredHistory.filter(issue => issue.date >= dateFrom);
+            }
+            
+            if (dateTo) {
+                filteredHistory = filteredHistory.filter(issue => issue.date <= dateTo);
+            }
+            
+            const jobUsage = {};
+            
+            filteredHistory.forEach(issue => {
+                if (!jobUsage[issue.jobNumber]) {
+                    jobUsage[issue.jobNumber] = {
+                        items: 0,
+                        quantity: 0
+                    };
+                }
+                
+                jobUsage[issue.jobNumber].items++;
+                jobUsage[issue.jobNumber].quantity += issue.quantity;
+            });
+            
+            let html = `<h3>Job Usage Report</h3>`;
+            if (dateFrom || dateTo) {
+                html += `<p>Period: ${dateFrom || 'Start'} to ${dateTo || 'End'}</p>`;
+            }
+            
+            html += '<table><thead><tr><th>Job Number</th><th>Items Issued</th><th>Total Quantity</th></tr></thead><tbody>';
+            
+            Object.keys(jobUsage).forEach(jobNumber => {
+                html += `<tr>
+                    <td>${jobNumber}</td>
+                    <td>${jobUsage[jobNumber].items}</td>
+                    <td>${jobUsage[jobNumber].quantity}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            return html;
+        }
+
+        // Generate low stock report
+        function generateLowStockReport() {
+            const lowStockItems = inventory.filter(item => item.quantity <= item.minQuantity);
+            
+            let html = '<h3>Low Stock Alert Report</h3>';
+            html += '<table><thead><tr><th>Item Name</th><th>Category</th><th>Current Quantity</th><th>Minimum Quantity</th><th>Location</th></tr></thead><tbody>';
+            
+            lowStockItems.forEach(item => {
+                html += `<tr>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td class="status-low">${item.quantity}</td>
+                    <td>${item.minQuantity}</td>
+                    <td>${item.location}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            return html;
+        }
+
+        // Save user preferences
+        function saveUserPreferences(e) {
+            e.preventDefault();
+            // In a real application, this would save to a database
+            alert('User preferences saved successfully!');
+        }
+
+        // Save system configuration
+        function saveSystemConfig(e) {
+            e.preventDefault();
+            // In a real application, this would save to a database
+            alert('System configuration saved successfully!');
+        }
+
+        // Backup database
+        function backupDatabase() {
+            // In a real application, this would trigger a database backup
+            showMessage(dbSuccessMessage, 'Database backup completed successfully!');
+        }
+
+        // Restore database
+        function restoreDatabase() {
+            if (confirm('Are you sure you want to restore the database? This will overwrite current data.')) {
+                // In a real application, this would restore from a backup
+                showMessage(dbSuccessMessage, 'Database restored successfully!');
+            }
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('WARNING: This will permanently delete all data. Are you absolutely sure?')) {
+                if (confirm('This action cannot be undone. Type "DELETE" to confirm.')) {
+                    // In a real application, this would clear the database
+                    showMessage(dbSuccessMessage, 'All data has been cleared!');
+                }
+            }
+        }
+
+        // Perform logout
+        function performLogout() {
+            // In a real application, this would clear session and redirect to login
+            alert('You have been logged out successfully!');
+            logoutModal.style.display = 'none';
+            // Redirect to login page would happen here
+            // window.location.href = 'login.html';
+        }
+
+        // Show message
+        function showMessage(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
