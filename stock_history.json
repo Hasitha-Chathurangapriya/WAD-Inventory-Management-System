@@ -1,0 +1,32 @@
+{
+    "metadata": {
+        "last_updated": "2026-02-02 18:23:14",
+        "total_transactions": 2,
+        "oldest_transaction": "2026-02-02T17:21:49.163Z",
+        "newest_transaction": "2026-02-02T17:23:14.781Z"
+    },
+    "transactions": [
+        {
+            "date": "2026-02-02T17:23:14.781Z",
+            "itemCode": "1222",
+            "description": "snmsm",
+            "type": "NEW",
+            "previousBalance": 0,
+            "newBalance": 120000,
+            "quantity": 120000,
+            "notes": "New item added: No notes",
+            "user": "Admin"
+        },
+        {
+            "date": "2026-02-02T17:21:49.163Z",
+            "itemCode": "12",
+            "description": "luckastro",
+            "type": "NEW",
+            "previousBalance": 0,
+            "newBalance": 0,
+            "quantity": 0,
+            "notes": "New item added: No notes",
+            "user": "Admin"
+        }
+    ]
+}
